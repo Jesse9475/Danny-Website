@@ -1,0 +1,57 @@
+function doPost(e) {
+  try {
+    // Get the parameters from the POST request
+    var name = e.parameter.name;
+    var email = e.parameter.email;
+    var phone = e.parameter.phone;
+    var service = e.parameter.service;
+    var message = e.parameter.message;
+    
+    // Get the active spreadsheet
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Form Responses 1");
+    
+    // Add a new row with the form data
+    sheet.appendRow([new Date(), name, email, phone, service, message]);
+    
+    // Send email notification
+    sendEmailNotification(name, email, phone, service, message);
+    
+    // Return a success response
+    return ContentService.createTextOutput(JSON.stringify({result: "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(error) {
+    // Log the error for debugging
+    Logger.log(error.toString());
+    
+    // Return an error response
+    return ContentService.createTextOutput(JSON.stringify({result: "error", error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function sendEmailNotification(name, email, phone, service, message) {
+  var subject = "New Contact Form Submission from " + name;
+  var body = "You have received a new contact form submission:\n\n" +
+             "Name: " + name + "\n" +
+             "Email: " + email + "\n" +
+             "Phone: " + phone + "\n" +
+             "Service: " + service + "\n" +
+             "Message: " + message;
+  
+  // Replace with your email address
+  var recipientEmail = "hs5422902@gmail.com";
+  
+  try {
+    MailApp.sendEmail({
+      to: recipientEmail,
+      subject: subject,
+      body: body
+    });
+    
+    // Log success
+    Logger.log("Email notification sent successfully");
+  } catch (emailError) {
+    // Log email error
+    Logger.log("Failed to send email notification: " + emailError.toString());
+  }
+}

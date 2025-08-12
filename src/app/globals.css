@@ -1,0 +1,449 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: {
+      --card: 0 0% 100%;
+      --card-foreground: 222.2 84% 4.9%;
+    };
+    --popover: {
+      --popover: 0 0% 100%;
+      --popover-foreground: 222.2 84% 4.9%;
+    };
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: {
+      --card: 222.2 84% 4.9%;
+      --card-foreground: 210 40% 98%;
+    };
+    --popover: {
+      --popover: 222.2 84% 4.9%;
+      --popover-foreground: 210 40% 98%;
+    };
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom animations for search experience */
+@layer utilities {
+  .animate-in {
+    animation-fill-mode: both;
+  }
+  
+  .slide-in-from-top-2 {
+    animation: slide-in-from-top-2 0.3s ease-out;
+  }
+  
+  .slide-in-from-top-4 {
+    animation: slide-in-from-top-4 0.5s ease-out;
+  }
+  
+  .slide-in-from-bottom-4 {
+    animation: slide-in-from-bottom-4 0.5s ease-out;
+  }
+  
+  .fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+  
+  .scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+  
+  .bounce-in {
+    animation: bounce-in 0.6s ease-out;
+  }
+  
+  .slide-up {
+    animation: slide-up 0.4s ease-out;
+  }
+  
+  /* Hide scrollbar for horizontal scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+  
+  .search-highlight {
+    background: linear-gradient(120deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: search-highlight 1.5s ease-in-out;
+  }
+  
+  .search-pulse {
+    animation: search-pulse 2s infinite;
+  }
+  
+  .search-fade-in {
+    animation: search-fade-in 0.5s ease-out;
+  }
+  
+  .search-slide-up {
+    animation: search-slide-up 0.6s ease-out;
+  }
+  
+  .search-scale-in {
+    animation: search-scale-in 0.4s ease-out;
+  }
+  
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
+  }
+}
+
+@keyframes slide-in-from-top-2 {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-top-4 {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-from-bottom-4 {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes search-highlight {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes search-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes search-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes search-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes search-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Enhanced hover effects for search results */
+.search-result-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-result-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Smooth transitions for search overlay */
+.search-overlay {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-overlay-enter {
+  opacity: 0;
+  transform: scale(0.95) translateY(-20px);
+}
+
+.search-overlay-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.search-overlay-exit {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.search-overlay-exit-active {
+  opacity: 0;
+  transform: scale(0.95) translateY(-20px);
+}
+
+/* Enhanced focus states for search input */
+.search-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: rgb(59, 130, 246);
+}
+
+/* Loading animation for search suggestions */
+.search-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.search-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: search-loading-shimmer 1.5s infinite;
+}
+
+@keyframes search-loading-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive search grid animations */
+@media (max-width: 768px) {
+  .search-grid-item {
+    animation-delay: calc(var(--animation-order) * 50ms);
+  }
+}
+
+/* Enhanced button hover effects */
+.btn-search {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-search::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-search:hover::before {
+  left: 100%;
+}
+
+.btn-search:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Search suggestion hover effects */
+.search-suggestion {
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.search-suggestion::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), transparent);
+  transition: width 0.3s ease;
+}
+
+.search-suggestion:hover::before {
+  width: 100%;
+}
+
+.search-suggestion:hover {
+  transform: translateX(4px);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Ensure all Select dropdowns are opaque and readable */
+[data-radix-select-content] {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  z-index: 9999 !important;
+}
+
+[data-radix-select-content] [data-radix-select-item] {
+  color: #111827 !important;
+  background-color: white !important;
+}
+
+[data-radix-select-content] [data-radix-select-item]:hover {
+  background-color: #f9fafb !important;
+}
+
+[data-radix-select-content] [data-radix-select-item]:focus {
+  background-color: #f3f4f6 !important;
+}
+
+/* Dark mode support for Select dropdowns */
+.dark [data-radix-select-content] {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.dark [data-radix-select-content] [data-radix-select-item] {
+  color: #f9fafb !important;
+  background-color: #1f2937 !important;
+}
+
+.dark [data-radix-select-content] [data-radix-select-item]:hover {
+  background-color: #374151 !important;
+}
+
+.dark [data-radix-select-content] [data-radix-select-item]:focus {
+  background-color: #4b5563 !important;
+}
