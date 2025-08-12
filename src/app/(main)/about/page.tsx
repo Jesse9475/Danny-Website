@@ -9,6 +9,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/lib/language-context';
 
+import { toast } from 'sonner';
+
 export default function AboutPage() {
   const { t } = useLanguage();
   const [contactForm, setContactForm] = useState({
@@ -18,11 +20,44 @@ export default function AboutPage() {
     message: ''
   });
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would implement the actual contact form submission
-    alert('Thank you for your message! We will get back to you soon.');
+    setIsSubmitting(true);
+    
+    // Create a simple form and submit it directly to Google Apps Script
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbyjpSRgo-F63jXH4BMR7C-eyHMQwZHjQboqoGhNkHiMY5mXMZjEqKinpqIittny1QqVdw/exec';
+    form.target = '_blank'; // Open in new tab to avoid page navigation
+    
+    // Add form fields
+    const fields = [
+      { name: 'name', value: contactForm.name },
+      { name: 'email', value: contactForm.email },
+      { name: 'phone', value: contactForm.phone },
+      { name: 'service', value: 'Contact Form' },
+      { name: 'message', value: contactForm.message }
+    ];
+    
+    fields.forEach(field => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = field.name;
+      input.value = field.value;
+      form.appendChild(input);
+    });
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    // Show success message
+    toast.success('Form submitted successfully! Check your email for confirmation.');
     setContactForm({ name: '', email: '', phone: '', message: '' });
+    setIsSubmitting(false);
   };
 
   return (
@@ -223,8 +258,8 @@ export default function AboutPage() {
                         required
                       />
                     </div>
-                    <Button type="submit" className="w-full">
-                      {t('about.contact.form.submit')}
+                    <Button type="submit" className="w-full" disabled={isSubmitting}>
+                      {isSubmitting ? 'Sending...' : t('about.contact.form.submit')}
                     </Button>
                   </form>
                 </CardContent>

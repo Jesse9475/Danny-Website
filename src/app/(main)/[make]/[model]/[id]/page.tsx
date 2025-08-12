@@ -32,6 +32,11 @@ import {
 import { toast } from 'sonner';
 import { useLanguage } from '@/lib/language-context';
 
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+
 interface CarImage {
   id: string;
   imageUrl: string;
@@ -88,6 +93,21 @@ export default function CarDetailsPage() {
   const [car, setCar] = useState<Car | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
+  const [testDriveForm, setTestDriveForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    preferredDate: '',
+    preferredTime: '',
+    additionalNotes: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (params.id) {
@@ -176,6 +196,94 @@ export default function CarDetailsPage() {
     if (car.isNewArrival) badges.push({ icon: Sparkles, label: t('car.newArrival'), color: 'bg-blue-500' });
     if (car.isSpecialOffer) badges.push({ icon: Tag, label: t('car.specialOffer'), color: 'bg-red-500' });
     return badges;
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Create a simple form and submit it directly to Google Apps Script
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbyjpSRgo-F63jXH4BMR7C-eyHMQwZHjQboqoGhNkHiMY5mXMZjEqKinpqIittny1QqVdw/exec';
+    form.target = '_blank'; // Open in new tab to avoid page navigation
+    
+    // Add form fields
+    const fields = [
+      { name: 'name', value: contactForm.name },
+      { name: 'email', value: contactForm.email },
+      { name: 'phone', value: contactForm.phone },
+      { name: 'service', value: `Vehicle Inquiry - ${car?.year} ${car?.make} ${car?.model}` },
+      { name: 'message', value: contactForm.message }
+    ];
+    
+    fields.forEach(field => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = field.name;
+      input.value = field.value;
+      form.appendChild(input);
+    });
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    // Show success message
+    toast.success('Form submitted successfully! Check your email for confirmation.');
+    setContactForm({ name: '', email: '', phone: '', message: '' });
+    setIsSubmitting(false);
+  };
+
+  const handleTestDriveSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Create a simple form and submit it directly to Google Apps Script
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://script.google.com/macros/s/AKfycbyjpSRgo-F63jXH4BMR7C-eyHMQwZHjQboqoGhNkHiMY5mXMZjEqKinpqIittny1QqVdw/exec';
+    form.target = '_blank'; // Open in new tab to avoid page navigation
+    
+    const vehicleInfo = `${car?.year} ${car?.make} ${car?.model}`;
+    const message = `Test Drive Request for ${vehicleInfo}${testDriveForm.preferredDate ? `\nPreferred Date: ${testDriveForm.preferredDate}` : ''}${testDriveForm.preferredTime ? `\nPreferred Time: ${testDriveForm.preferredTime}` : ''}${testDriveForm.additionalNotes ? `\nAdditional Notes: ${testDriveForm.additionalNotes}` : ''}`;
+    
+    // Add form fields
+    const fields = [
+      { name: 'name', value: testDriveForm.name },
+      { name: 'email', value: testDriveForm.email },
+      { name: 'phone', value: testDriveForm.phone },
+      { name: 'service', value: `Test Drive - ${vehicleInfo}` },
+      { name: 'message', value: message },
+      { name: 'preferredDate', value: testDriveForm.preferredDate },
+      { name: 'preferredTime', value: testDriveForm.preferredTime }
+    ];
+    
+    fields.forEach(field => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = field.name;
+      input.value = field.value;
+      form.appendChild(input);
+    });
+    
+    // Submit the form
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+    
+    // Show success message
+    toast.success('Test drive request submitted successfully! Check your email for confirmation.');
+    setTestDriveForm({
+      name: '',
+      email: '',
+      phone: '',
+      preferredDate: '',
+      preferredTime: '',
+      additionalNotes: ''
+    });
+    setIsSubmitting(false);
   };
 
   if (isLoading) {
@@ -419,12 +527,136 @@ export default function CarDetailsPage() {
                 <CardTitle>{t('car.interested')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full" size="lg">
-                  {t('car.contactDealer')}
-                </Button>
-                <Button variant="outline" className="w-full">
-                  {t('car.scheduleTestDrive')}
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="w-full" size="lg">
+                      {t('car.contactDealer')}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Contact Dealer</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleContactSubmit} className="space-y-4">
+                      <div>
+                        <Label htmlFor="contact-name">Name *</Label>
+                        <Input
+                          id="contact-name"
+                          value={contactForm.name}
+                          onChange={(e) => setContactForm({...contactForm, name: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="contact-email">Email *</Label>
+                        <Input
+                          id="contact-email"
+                          type="email"
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="contact-phone">Phone</Label>
+                        <Input
+                          id="contact-phone"
+                          type="tel"
+                          value={contactForm.phone}
+                          onChange={(e) => setContactForm({...contactForm, phone: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="contact-message">Message *</Label>
+                        <Textarea
+                          id="contact-message"
+                          rows={4}
+                          value={contactForm.message}
+                          onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? 'Sending...' : 'Send Message'}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      {t('car.scheduleTestDrive')}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Schedule Test Drive</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleTestDriveSubmit} className="space-y-4">
+                      <div>
+                        <Label htmlFor="testdrive-name">Name *</Label>
+                        <Input
+                          id="testdrive-name"
+                          value={testDriveForm.name}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, name: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="testdrive-email">Email *</Label>
+                        <Input
+                          id="testdrive-email"
+                          type="email"
+                          value={testDriveForm.email}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, email: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="testdrive-phone">Phone *</Label>
+                        <Input
+                          id="testdrive-phone"
+                          type="tel"
+                          value={testDriveForm.phone}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, phone: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="testdrive-date">Preferred Date</Label>
+                        <Input
+                          id="testdrive-date"
+                          type="date"
+                          value={testDriveForm.preferredDate}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, preferredDate: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="testdrive-time">Preferred Time</Label>
+                        <Input
+                          id="testdrive-time"
+                          type="time"
+                          value={testDriveForm.preferredTime}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, preferredTime: e.target.value})}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="testdrive-notes">Additional Notes</Label>
+                        <Textarea
+                          id="testdrive-notes"
+                          rows={3}
+                          value={testDriveForm.additionalNotes}
+                          onChange={(e) => setTestDriveForm({...testDriveForm, additionalNotes: e.target.value})}
+                        />
+                      </div>
+                      <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        {isSubmitting ? 'Scheduling...' : 'Schedule Test Drive'}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
                 <Button variant="outline" className="w-full">
                   {t('car.getFinancing')}
                 </Button>

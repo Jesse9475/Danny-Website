@@ -1,4 +1,44 @@
-This is a test file to verify our connection to the GitHub repository.
-Created on: 2025-08-12
-Branch: santi
-Status: Connected and working!
+Testing Google Apps Script Integration
+
+Google Apps Script URL: https://script.google.com/macros/s/AKfycbyjpSRgo-F63jXH4BMR7C-eyHMQwZHjQboqoGhNkHiMY5mXMZjEqKinpqIittny1QqVdw/exec
+
+Expected Parameters:
+- name: string (required)
+- email: string (required)
+- phone: string (optional)
+- service: string (required)
+- message: string (required)
+- preferredDate: string (optional) - for test drive requests
+- preferredTime: string (optional) - for test drive requests
+
+Expected Response:
+{
+  "result": "success"
+}
+
+Integration Status: DIRECT HTML FORM SUBMISSION ✅
+- Contact form on About page ✅
+- Contact dealer form on car detail pages ✅
+- Test drive request form on car detail pages ✅
+- No local API routes ✅
+- No JavaScript fetch calls ✅
+- Direct HTML form submission to Google Apps Script ✅
+
+Data Flow:
+Website Form → HTML Form POST → Google Apps Script → Google Sheets + Email
+
+All forms will now submit directly to the Google Apps Script which will:
+1. Add the submission to Google Sheets (with date/time if provided)
+2. Send email notification to hs5422902@gmail.com (with date/time if provided)
+3. Return success/error response to the website
+
+Google Apps Script Features:
+- Handles contact form submissions
+- Handles test drive requests with date/time
+- Sends formatted email notifications
+- Stores data in Google Sheets with timestamps
+- Includes preferred date and time in emails
+- Error handling and logging
+- Automatic sheet creation with headers
+
+Macro Code: See GOOGLE_APPS_SCRIPT_MACRO.txt for the complete script

@@ -1,0 +1,179 @@
+GOOGLE APPS SCRIPT MACRO CODE
+================================
+
+Copy and paste this entire code into your Google Apps Script editor:
+
+IMPORTANT: This script should be deployed at:
+https://script.google.com/macros/s/AKfycbyjpSRgo-F63jXH4BMR7C-eyHMQwZHjQboqoGhNkHiMY5mXMZjEqKinpqIittny1QqVdw/exec
+
+function doPost(e) {
+  try {
+    // Get the parameters from the POST request
+    var name = e.parameter.name;
+    var email = e.parameter.email;
+    var phone = e.parameter.phone;
+    var service = e.parameter.service;
+    var message = e.parameter.message;
+    var preferredDate = e.parameter.preferredDate;
+    var preferredTime = e.parameter.preferredTime;
+    
+    // Get the active spreadsheet
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Form Responses 1");
+    
+    // If sheet doesn't exist, create it with headers
+    if (!sheet) {
+      sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("Form Responses 1");
+      // Add headers
+      sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Service", "Message", "Preferred Date", "Preferred Time", "Email Sent Status"]);
+    }
+    
+    // Add a new row with the form data (including date/time if provided)
+    var timestamp = new Date();
+    sheet.appendRow([timestamp, name, email, phone, service, message, preferredDate || "", preferredTime || "", "Processing..."]);
+    
+    // Send email notification with enhanced formatting
+    var emailStatus = sendEmailNotification(name, email, phone, service, message, preferredDate, preferredTime);
+    
+    // Update the email status in the sheet
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 9).setValue(emailStatus);
+    
+    // Return a success response
+    return ContentService.createTextOutput(JSON.stringify({result: "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(error) {
+    // Log the error for debugging
+    Logger.log(error.toString());
+    
+    // Return an error response
+    return ContentService.createTextOutput(JSON.stringify({result: "error", error: error.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function sendEmailNotification(name, email, phone, service, message, preferredDate, preferredTime) {
+  var subject = "New Contact Form Submission from " + name;
+  
+  // Build the email body with enhanced formatting
+  var body = "You have received a new contact form submission:\n\n" +
+             "─────────────────────────────────\n" +
+             "📝 Customer Information:\n" +
+             "Name: " + name + "\n" +
+             "Email: " + email + "\n" +
+             "Phone: " + (phone || "Not provided") + "\n\n" +
+             "🚗 Service/Vehicle:\n" +
+             service + "\n\n";
+  
+  // Add date and time if provided
+  if (preferredDate || preferredTime) {
+    body += "📅 Preferred Schedule:\n";
+    if (preferredDate) {
+      body += "Date: " + preferredDate + "\n";
+    }
+    if (preferredTime) {
+      body += "Time: " + preferredTime + "\n";
+    }
+    body += "\n";
+  }
+  
+  body += "💬 Message:\n" +
+          message + "\n" +
+          "─────────────────────────────────\n\n" +
+          "📅 Submitted: " + new Date().toLocaleString() + "\n\n" +
+          "Please respond to this inquiry promptly to provide excellent customer service.\n\n" +
+          "This is an automated notification from your Autohaus dealership website.";
+  
+  // Replace with your email address
+  var recipientEmail = "hs5422902@gmail.com";
+  
+  try {
+    MailApp.sendEmail({
+      to: recipientEmail,
+      subject: subject,
+      body: body
+    });
+    
+    // Log success
+    Logger.log("Email notification sent successfully");
+    return "Email sent: " + new Date().toLocaleString();
+  } catch (emailError) {
+    // Log email error
+    Logger.log("Failed to send email notification: " + emailError.toString());
+    return "Email failed: " + emailError.toString();
+  }
+}
+
+function doGet() {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "active",
+    message: "Autohaus Contact Form Web App is running"
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function setup() {
+  // This function helps set up the sheet if it doesn't exist
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Form Responses 1");
+  if (!sheet) {
+    sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet("Form Responses 1");
+    // Add headers
+    sheet.appendRow(["Timestamp", "Name", "Email", "Phone", "Service", "Message", "Preferred Date", "Preferred Time", "Email Sent Status"]);
+    Logger.log("Sheet 'Form Responses 1' created with headers");
+  } else {
+    Logger.log("Sheet 'Form Responses 1' already exists");
+  }
+}
+
+================================
+SETUP INSTRUCTIONS:
+================================
+
+1. Go to script.google.com
+2. Create a new project or open your existing one
+3. Replace all the code with the code above
+4. Save the project
+5. Deploy as a web app:
+   - Click "Deploy" → "New deployment"
+   - Choose "Web app" as the type
+   - Set "Execute as" to "Me"
+   - Set "Who has access" to "Anyone"
+   - Click "Deploy"
+6. Copy the web app URL and use it in your website
+
+================================
+FEATURES:
+================================
+
+✅ Handles contact form submissions
+✅ Handles test drive requests with date/time
+✅ Sends email notifications with formatted content
+✅ Stores data in Google Sheets with timestamps
+✅ Includes preferred date and time in emails
+✅ Error handling and logging
+✅ Automatic sheet creation with headers
+
+================================
+EXPECTED PARAMETERS:
+================================
+
+- name: string (required)
+- email: string (required)
+- phone: string (optional)
+- service: string (required)
+- message: string (required)
+- preferredDate: string (optional)
+- preferredTime: string (optional)
+
+================================
+EXPECTED RESPONSE:
+================================
+
+Success:
+{
+  "result": "success"
+}
+
+Error:
+{
+  "result": "error",
+  "error": "error message"
+}
